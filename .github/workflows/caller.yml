@@ -1,0 +1,14 @@
+name: Caller
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  caller:
+    uses: dariocurr/checkout-called/.github/workflows/called.yml@main
