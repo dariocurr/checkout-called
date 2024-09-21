@@ -1,4 +1,4 @@
-name: Called
+name: "[TEST] called"
 
 on:
   workflow_call:

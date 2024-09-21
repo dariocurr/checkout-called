@@ -1,4 +1,4 @@
-name: Caller
+name: "[TEST] caller"
 
 on:
   pull_request:
