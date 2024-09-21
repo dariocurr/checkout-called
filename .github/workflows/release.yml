@@ -1,0 +1,15 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+
+  workflow_dispatch:
+
+jobs:
+  release:
+    uses: dariocurr/.github/.github/workflows/tracking_release.yml@main
+    secrets: inherit
+    with:
+      action_to_track: actions/checkout
