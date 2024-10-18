@@ -1,6 +1,6 @@
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.6.0
+    rev: v5.0.0
     hooks:
       - id: check-ast
       - id: check-builtin-literals
@@ -24,15 +24,13 @@ repos:
       - id: mixed-line-ending
       - id: name-tests-test
         args: [--pytest-test-first]
-      - id: no-commit-to-branch
-        args: [-b, master, -b, qa]
       - id: pretty-format-json
         args: [--autofix]
       - id: sort-simple-yaml
       - id: trailing-whitespace
 
   - repo: https://github.com/gitleaks/gitleaks
-    rev: v8.18.4
+    rev: v8.21.0
     hooks:
       - id: gitleaks
 
