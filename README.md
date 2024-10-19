@@ -35,3 +35,19 @@ To do this, pass the token as an argument:
   with:
     token: ${{ secrets.TOKEN }}
  ```
+
+### Nested workflows
+
+When working with nested reusable workflows (as desribed in issue [#5](https://github.com/dariocurr/checkout-called/issues/5)), the GitHub API for workflow runs does not guarantee the order of the `referenced_workflows`.
+This means we cannot rely on `referenced_workflows[0]` being the correct workflow to use.
+
+Thus, in order to ensure the correctness of the execution, add the `workflow` argument:
+
+```yml
+- name: Checkout called repo
+  uses: dariocurr/checkout-called@main
+  with:
+    workflow: organization/repository/.github/workflows/workflow.yml
+ ```
+
+> The `workflow` argument is used to perform a substring search. A full workflow reference like `organization/repository/.github/workflows/workflow.yml` should be used to avoid conflicts when multiple workflows have the same name

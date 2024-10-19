@@ -4,6 +4,12 @@ branding:
   color: gray-dark
 description: Checkout the called repository at the same ref it was called
 inputs:
+  workflow:
+    description: >
+      The workflow reference to look for. This is **required** when multiple reusable workflows
+      are called since GitHub API does not guarantee any ordering for `referenced_workflows[]`.
+      This is optional when a single reusable workflow is called. The first (and only)
+      workflow listed by the GitHub API is then used.
   token:
     description: >
       Personal access token (PAT) used to fetch the repository. The PAT is configured
@@ -45,12 +51,12 @@ inputs:
       The user to use when connecting to the remote SSH host. By default 'git' is used.
     default: git
   persist-credentials:
-    description: 'Whether to configure the token or SSH key with the local git config'
+    description: Whether to configure the token or SSH key with the local git config
     default: true
   path:
-    description: 'Relative path under $GITHUB_WORKSPACE to place the repository'
+    description: Relative path under $GITHUB_WORKSPACE to place the repository
   clean:
-    description: 'Whether to execute `git clean -ffdx && git reset --hard HEAD` before fetching'
+    description: Whether to execute `git clean -ffdx && git reset --hard HEAD` before fetching
     default: true
   filter:
     description: >
@@ -67,16 +73,16 @@ inputs:
       Specifies whether to use cone-mode when doing a sparse checkout.
     default: true
   fetch-depth:
-    description: 'Number of commits to fetch. 0 indicates all history for all branches and tags.'
+    description: Number of commits to fetch. 0 indicates all history for all branches and tags.
     default: 1
   fetch-tags:
-    description: 'Whether to fetch tags, even if fetch-depth > 0.'
+    description: Whether to fetch tags, even if fetch-depth > 0.
     default: false
   show-progress:
-    description: 'Whether to show progress status output when fetching.'
+    description: Whether to show progress status output when fetching.
     default: true
   lfs:
-    description: 'Whether to download Git-LFS files'
+    description: Whether to download Git-LFS files
     default: false
   submodules:
     description: >
@@ -92,7 +98,13 @@ inputs:
     default: true
   github-server-url:
     description: The base URL for the GitHub instance that you are trying to clone from, will use environment defaults to fetch from the same instance that the workflow is running from unless specified. Example URLs are https://github.com or https://my-ghes-server.example.com
-    required: false
+outputs:
+  ref:
+    description: The branch, tag or SHA that was checked out
+    value: ${{ steps.checkout.outputs.ref }}
+  commit:
+    description: The commit SHA that was checked out
+    value: ${{ steps.checkout.outputs.commit }}
 runs:
   using: composite
   steps:
@@ -100,21 +112,30 @@ runs:
       id: called_repo
       shell: bash
       run: |
+        # retrieve workflow run metadata calling API
         content=$(curl -L -H "Accept: application/vnd.github+json" -H "Authorization: Bearer ${{ inputs.token }}" -H "X-GitHub-Api-Version: 2022-11-28" ${{ github.api_url }}/repos/${{ github.repository }}/actions/runs/${{ github.run_id }})
-        data=$(echo $content | jq -r '.referenced_workflows[0]')
-        if [ "$data" != "null" ];
-        then
+        if [[ -z "${{ inputs.workflow }}" ]]; then
+          # if no workflow is specified, use the first referenced workflow
+          data=$(echo $content | jq -r '.referenced_workflows[0]')
+        else
+          # if a workflow is specified, filter the referenced workflows
+          data=$(echo $content | jq --arg path "${{ inputs.workflow }}" '[.referenced_workflows[] | select(.path | contains($path))] | first')
+        fi
+        if [ -z "$data" ]; then
+          # if no referenced workflows are found, exit with an error
+          echo "::error ::Unable to retrieve the workflow metadata. Please ensure that the given token has the required permissions"
+          exit 1
+        else
+          # extract the ref and repository from the referenced workflow
           ref=$(echo $data | jq -r  '.sha')
           repository=$(echo $data | jq -r  '.path' | cut -d'/' -f1-2)
           echo "repository=$repository" >> $GITHUB_OUTPUT
           echo "ref=$ref" >> $GITHUB_OUTPUT
-        else
-          echo "::error ::Unable to retrieve the workflow metadata. Please ensure that the given token has the required permissions"
-          exit 1
         fi
 
     - name: Checkout workflows repo
       if: steps.called_repo.outputs.ref && steps.called_repo.outputs.repository
+      id: checkout
       uses: actions/checkout@v4.2.1
       with:
         ref: ${{ steps.called_repo.outputs.ref }}
@@ -137,5 +158,3 @@ runs:
         submodules: ${{ inputs.submodules }}
         set-safe-directory: ${{ inputs.set-safe-directory }}
         github-server-url: ${{ inputs.github-server-url }}
-           
-  
