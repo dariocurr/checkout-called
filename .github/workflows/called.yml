@@ -5,8 +5,11 @@ on:
 
 jobs:
   called:
+    permissions:
+      contents: read
+      id-token: write
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
       - name: Checkout called repo
-        uses: dariocurr/checkout-called@main
+        uses: dariocurr/checkout-called@dev

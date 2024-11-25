@@ -11,4 +11,4 @@ on:
 
 jobs:
   caller:
-    uses: dariocurr/checkout-called/.github/workflows/called.yml@main
+    uses: dariocurr/checkout-called/.github/workflows/intermidiate.yml@dev

@@ -112,26 +112,40 @@ runs:
       id: called_repo
       shell: bash
       run: |
-        # retrieve workflow run metadata calling API
-        content=$(curl -L -H "Accept: application/vnd.github+json" -H "Authorization: Bearer ${{ inputs.token }}" -H "X-GitHub-Api-Version: 2022-11-28" ${{ github.api_url }}/repos/${{ github.repository }}/actions/runs/${{ github.run_id }})
-        if [[ -z "${{ inputs.workflow }}" ]]; then
-          # if no workflow is specified, use the first referenced workflow
-          data=$(echo $content | jq -r '.referenced_workflows[0]')
-        else
-          # if a workflow is specified, filter the referenced workflows
-          data=$(echo $content | jq --arg path "${{ inputs.workflow }}" '[.referenced_workflows[] | select(.path | contains($path))] | first')
-        fi
-        if [ -z "$data" ]; then
-          # if no referenced workflows are found, exit with an error
-          echo "::error ::Unable to retrieve the workflow metadata. Please ensure that the given token has the required permissions"
-          exit 1
-        else
-          # extract the ref and repository from the referenced workflow
-          ref=$(echo $data | jq -r  '.sha')
-          repository=$(echo $data | jq -r  '.path' | cut -d'/' -f1-2)
-          echo "repository=$repository" >> $GITHUB_OUTPUT
-          echo "ref=$ref" >> $GITHUB_OUTPUT
-        fi
+        JWT=$(curl -s -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "$ACTIONS_ID_TOKEN_REQUEST_URL")
+        PAYLOAD=$(echo "$JWT" | cut -d '.' -f 2 | base64 -d 2>/dev/null || true)
+        WORKFLOW_REF_LINE==$(echo "$PAYLOAD" | grep -o '"job_workflow_ref":"[^"]*"')
+
+        WORKFLOW_REPOSITORY=$(
+          echo "$WORKFLOW_REF_LINE" \
+            | cut -d':' -f2 \
+            | cut -d'@' -f1 \
+            | tr -d '"' \
+            | cut -d'/' -f1,2
+        )
+
+        WORKFLOW_FULL_REF=$(
+          echo "$WORKFLOW_REF_LINE" \
+            | cut -d':' -f2 \
+            | cut -d'@' -f2 \
+            | tr -d '"'
+        )
+
+        case $WORKFLOW_FULL_REF in
+          refs/heads/*)
+            WORKFLOW_REF=${WORKFLOW_FULL_REF#refs/heads/}
+            ;;
+          refs/tags/*)
+            WORKFLOW_REF=${WORKFLOW_FULL_REF#refs/tags/}
+            ;;
+          refs/pull/*/merge)
+            # exception: we got triggered by a pull request, the ref is the base branch
+            WORKFLOW_REF=$GITHUB_HEAD_REF
+            ;;
+        esac
+
+        echo "repository=$WORKFLOW_REPOSITORY" >> $GITHUB_OUTPUT
+        echo "ref=$WORKFLOW_REF" >> $GITHUB_OUTPUT
 
     - name: Checkout workflows repo
       if: steps.called_repo.outputs.ref && steps.called_repo.outputs.repository
