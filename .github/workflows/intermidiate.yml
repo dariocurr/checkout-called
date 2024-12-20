@@ -1,0 +1,8 @@
+name: "[TEST] intermidiate"
+
+on:
+  workflow_call:
+
+jobs:
+  caller:
+    uses: dariocurr/checkout-called/.github/workflows/called.yml@dev
