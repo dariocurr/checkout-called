@@ -33,7 +33,3 @@ repos:
     rev: v8.21.2
     hooks:
       - id: gitleaks
-
-ci:
-  autoupdate_branch: develop
-  autoupdate_commit_msg: ⬆ [pre-commit.ci] pre-commit autoupdate
