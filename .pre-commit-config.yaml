@@ -30,6 +30,6 @@ repos:
       - id: trailing-whitespace
 
   - repo: https://github.com/gitleaks/gitleaks
-    rev: v8.23.0
+    rev: v8.23.1
     hooks:
       - id: gitleaks
