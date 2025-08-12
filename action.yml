@@ -150,7 +150,7 @@ runs:
     - name: Checkout workflows repo
       if: steps.called_repo.outputs.ref && steps.called_repo.outputs.repository
       id: checkout
-      uses: actions/checkout@v4.2.2
+      uses: actions/checkout@v5.0.0
       with:
         ref: ${{ steps.called_repo.outputs.ref }}
         repository: ${{ steps.called_repo.outputs.repository }}
