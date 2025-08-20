@@ -1,24 +1,15 @@
 name: validate
 
 on:
-  pull_request:
-    branches:
-      - main
-  push:
-    branches:
-      - main
-  workflow_dispatch:
+  workflow_call:
 
 jobs:
-  called:
+  validate:
     permissions:
       contents: read
       id-token: write
     runs-on: ubuntu-latest
     timeout-minutes: 1
     steps:
-      - name: checkout called repo with ref
+      - name: checkout called repo
         uses: dariocurr/checkout-called@dev
-
-      - name: checkout called repo with commit id
-        uses: dariocurr/checkout-called@7c6949979c469e0799e576de5049badba13d0033
