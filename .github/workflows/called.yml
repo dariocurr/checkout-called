@@ -1,15 +1,24 @@
-name: "[TEST] called"
+name: validate
 
 on:
-  workflow_call:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+  workflow_dispatch:
 
 jobs:
-  called-ref:
+  called:
     permissions:
       contents: read
       id-token: write
     runs-on: ubuntu-latest
     timeout-minutes: 1
     steps:
-      - name: checkout called repo
-        uses: dariocurr/checkout-called@${{ github.ref || github.sha }}
+      - name: checkout called repo with ref
+        uses: dariocurr/checkout-called@sha
+
+      - name: checkout called repo with sha
+        uses: dariocurr/checkout-called@sha
