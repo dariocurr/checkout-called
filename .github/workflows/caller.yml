@@ -14,4 +14,4 @@ jobs:
     uses: dariocurr/checkout-called/.github/workflows/called.yml@sha
 
   caller-sha:
-    uses: dariocurr/checkout-called/.github/workflows/called.yml@844a01ef312455c723ecef612b98bf775976a1b8
+    uses: dariocurr/checkout-called/.github/workflows/called.yml@cd97959fb18afbd7412e3e0381c03ded895d50fa
