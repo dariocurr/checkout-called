@@ -112,6 +112,9 @@ runs:
       id: called_repo
       shell: bash
       run: |
+        # enable extended globbing for pattern matching
+        shopt -s extglob
+
         JWT=$(curl -s -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "$ACTIONS_ID_TOKEN_REQUEST_URL")
         PAYLOAD=$(echo "$JWT" | cut -d '.' -f 2 | base64 -d 2>/dev/null || true)
         WORKFLOW_REF_LINE==$(echo "$PAYLOAD" | grep -o '"job_workflow_ref":"[^"]*"')
@@ -145,10 +148,10 @@ runs:
             WORKFLOW_REF=$GITHUB_HEAD_REF
             echo "matching refs/pull/*/merge: $WORKFLOW_REF"
             ;;
-          [[:xdigit:]]{8,})
+          +([[:xdigit:]]))
             # sha hashes
-            echo "matching sha: $WORKFLOW_FULL_REF"
             WORKFLOW_REF=$WORKFLOW_FULL_REF
+            echo "matching sha: $WORKFLOW_REF"
             ;;
           *)
             echo "unknown workflow ref format: $WORKFLOW_FULL_REF"
