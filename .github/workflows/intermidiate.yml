@@ -8,4 +8,4 @@ jobs:
     uses: dariocurr/checkout-called/.github/workflows/called.yml@dev
 
   caller-sha:
-    uses: dariocurr/checkout-called/.github/workflows/called.yml@${{ github.sha }}
+    uses: dariocurr/checkout-called/.github/workflows/called.yml@a07558a6ac1717fd1028eeda2987aaa25c7ab411

@@ -14,4 +14,4 @@ jobs:
     uses: dariocurr/checkout-called/.github/workflows/intermidiate.yml@dev
 
   caller-sha:
-    uses: dariocurr/checkout-called/.github/workflows/intermidiate.yml@${{ github.sha }}
+    uses: dariocurr/checkout-called/.github/workflows/intermidiate.yml@a07558a6ac1717fd1028eeda2987aaa25c7ab411
