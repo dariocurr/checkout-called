@@ -134,13 +134,16 @@ runs:
         case $WORKFLOW_FULL_REF in
           refs/heads/*)
             WORKFLOW_REF=${WORKFLOW_FULL_REF#refs/heads/}
+            echo "matching refs/heads/*: $WORKFLOW_REF"
             ;;
           refs/tags/*)
             WORKFLOW_REF=${WORKFLOW_FULL_REF#refs/tags/}
+            echo "matching refs/tags/*: $WORKFLOW_REF"
             ;;
           refs/pull/*/merge)
-            # exception: we got triggered by a pull request, the ref is the base branch
+            # triggered by a pull request, the ref is the base branch
             WORKFLOW_REF=$GITHUB_HEAD_REF
+            echo "matching refs/pull/*/merge: $WORKFLOW_REF"
             ;;
           *)
             echo "unknown workflow ref format: $WORKFLOW_FULL_REF"
