@@ -4,8 +4,5 @@ on:
   workflow_call:
 
 jobs:
-  caller-ref:
+  caller:
     uses: dariocurr/checkout-called/.github/workflows/called.yml@sha
-
-  caller-sha:
-    uses: dariocurr/checkout-called/.github/workflows/called.yml@b9c7c4ed33e0f5d5aec237083a6e5beb529c7587
