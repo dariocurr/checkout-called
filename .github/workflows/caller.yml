@@ -1,0 +1,19 @@
+name: "[internal] caller"
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  validate-ref:
+    uses: dariocurr/checkout-called/.github/workflows/validate.yml@dev
+    secrets: inherit
+
+  validate-sha:
+    uses: dariocurr/checkout-called/.github/workflows/validate.yml@main
+    secrets: inherit
