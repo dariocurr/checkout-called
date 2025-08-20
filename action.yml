@@ -145,6 +145,11 @@ runs:
             WORKFLOW_REF=$GITHUB_HEAD_REF
             echo "matching refs/pull/*/merge: $WORKFLOW_REF"
             ;;
+          [[:xdigit:]]{8,})
+            # sha hashes
+            echo "matching sha: $WORKFLOW_FULL_REF"
+            WORKFLOW_REF=$WORKFLOW_FULL_REF
+            ;;
           *)
             echo "unknown workflow ref format: $WORKFLOW_FULL_REF"
             exit 1
@@ -156,7 +161,7 @@ runs:
     - name: checkout workflows repo
       if: steps.called_repo.outputs.ref && steps.called_repo.outputs.repository
       id: checkout
-      uses: actions/checkout@v4.2.2
+      uses: actions/checkout@v5.0.0
       with:
         ref: ${{ steps.called_repo.outputs.ref }}
         repository: ${{ steps.called_repo.outputs.repository }}
