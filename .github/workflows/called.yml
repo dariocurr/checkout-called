@@ -21,4 +21,4 @@ jobs:
         uses: dariocurr/checkout-called@sha
 
       - name: checkout called repo with sha
-        uses: dariocurr/checkout-called@sha
+        uses: dariocurr/checkout-called@125c7ee0a27f33cb2bfd16f3de116c930c1bc96a
