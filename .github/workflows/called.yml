@@ -22,4 +22,4 @@ jobs:
     timeout-minutes: 1
     steps:
       - name: checkout called repo with SHA
-        uses: dariocurr/checkout-called@461770172bfbf709f72ef3e2e96ab8d67e550ad6
+        uses: dariocurr/checkout-called@f34354ac067dd2373c9f6310566c68876a123409
