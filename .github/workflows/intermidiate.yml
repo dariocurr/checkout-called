@@ -4,5 +4,8 @@ on:
   workflow_call:
 
 jobs:
-  caller:
+  caller-ref:
     uses: dariocurr/checkout-called/.github/workflows/called.yml@dev
+
+  caller-sha:
+    uses: dariocurr/checkout-called/.github/workflows/called.yml@${{ github.sha }}

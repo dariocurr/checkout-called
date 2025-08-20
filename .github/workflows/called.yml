@@ -4,12 +4,22 @@ on:
   workflow_call:
 
 jobs:
-  called:
+  called-ref:
     permissions:
       contents: read
       id-token: write
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 1
     steps:
-      - name: Checkout called repo
+      - name: checkout called repo with ref
         uses: dariocurr/checkout-called@dev
+
+  called-sha:
+    permissions:
+      contents: read
+      id-token: write
+    runs-on: ubuntu-latest
+    timeout-minutes: 1
+    steps:
+      - name: checkout called repo with SHA
+        uses: dariocurr/checkout-called@${{ github.sha }}
