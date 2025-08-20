@@ -15,5 +15,5 @@ jobs:
     secrets: inherit
 
   validate-sha:
-    uses: dariocurr/checkout-called/.github/workflows/validate.yml@main
+    uses: dariocurr/checkout-called/.github/workflows/validate.yml@bc63c65a56221331e6c16f7c9102930fd3999a77
     secrets: inherit
