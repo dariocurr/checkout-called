@@ -1,8 +1,8 @@
-name: Checkout called repository
+name: checkout called repository
 branding:
   icon: play
   color: gray-dark
-description: Checkout the called repository at the same ref it was called
+description: checkout the called repository at the same ref it was called
 inputs:
   workflow:
     description: >
@@ -108,7 +108,7 @@ outputs:
 runs:
   using: composite
   steps:
-    - name: Get workflow reference
+    - name: get workflow reference
       id: called_repo
       shell: bash
       run: |
@@ -134,20 +134,26 @@ runs:
         case $WORKFLOW_FULL_REF in
           refs/heads/*)
             WORKFLOW_REF=${WORKFLOW_FULL_REF#refs/heads/}
+            echo "matching refs/heads/*: $WORKFLOW_REF"
             ;;
           refs/tags/*)
             WORKFLOW_REF=${WORKFLOW_FULL_REF#refs/tags/}
+            echo "matching refs/tags/*: $WORKFLOW_REF"
             ;;
           refs/pull/*/merge)
-            # exception: we got triggered by a pull request, the ref is the base branch
+            # triggered by a pull request, the ref is the base branch
             WORKFLOW_REF=$GITHUB_HEAD_REF
+            echo "matching refs/pull/*/merge: $WORKFLOW_REF"
             ;;
+          *)
+            echo "unknown workflow ref format: $WORKFLOW_FULL_REF"
+            exit 1
         esac
 
         echo "repository=$WORKFLOW_REPOSITORY" >> $GITHUB_OUTPUT
         echo "ref=$WORKFLOW_REF" >> $GITHUB_OUTPUT
 
-    - name: Checkout workflows repo
+    - name: checkout workflows repo
       if: steps.called_repo.outputs.ref && steps.called_repo.outputs.repository
       id: checkout
       uses: actions/checkout@v5.0.0
