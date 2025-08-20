@@ -142,6 +142,9 @@ runs:
             # exception: we got triggered by a pull request, the ref is the base branch
             WORKFLOW_REF=$GITHUB_HEAD_REF
             ;;
+          *)
+            echo "unknown workflow ref format: $WORKFLOW_FULL_REF"
+            exit 1
         esac
 
         echo "repository=$WORKFLOW_REPOSITORY" >> $GITHUB_OUTPUT
