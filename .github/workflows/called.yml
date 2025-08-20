@@ -11,15 +11,5 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 1
     steps:
-      - name: checkout called repo with ref
-        uses: dariocurr/checkout-called@sha
-
-  called-sha:
-    permissions:
-      contents: read
-      id-token: write
-    runs-on: ubuntu-latest
-    timeout-minutes: 1
-    steps:
-      - name: checkout called repo with SHA
-        uses: dariocurr/checkout-called@795c850aac6b3776d9ea21d0df2d8ee0c024046b
+      - name: checkout called repo
+        uses: dariocurr/checkout-called@${{ github.ref || github.sha }}

@@ -10,5 +10,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  caller:
+  caller-ref:
     uses: dariocurr/checkout-called/.github/workflows/intermidiate.yml@sha
+
+  caller-sha:
+    uses: dariocurr/checkout-called/.github/workflows/intermidiate.yml@795c850aac6b3776d9ea21d0df2d8ee0c024046b
