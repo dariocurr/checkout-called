@@ -12,7 +12,7 @@ jobs:
     timeout-minutes: 1
     steps:
       - name: checkout called repo with ref
-        uses: dariocurr/checkout-called@dev
+        uses: dariocurr/checkout-called@sha
 
   called-sha:
     permissions:
