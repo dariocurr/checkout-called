@@ -24,3 +24,13 @@ This action mirrors the arguments of [`actions/checkout`](https://github.com/act
 For example, if you call: `user/repository/.github/workflows/workflow.yml@branch`, it will checkout the `user/repository` repository using `branch` as reference
 
 > This repository is committed to maintaining compatibility and same version as [`actions/checkout`](https://github.com/actions/checkout)
+
+## Versioning and tags
+
+Tags (for example `v6.0.2`) may move to stay aligned with
+[`actions/checkout`](https://github.com/actions/checkout)
+for the same release line.
+This is intentional and not an error.
+
+If you need a fully immutable reference for automation,
+pin to a commit SHA instead of a tag.
