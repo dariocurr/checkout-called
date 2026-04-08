@@ -12,4 +12,4 @@ jobs:
     timeout-minutes: 1
     steps:
       - name: checkout called repo
-        uses: dariocurr/checkout-called@dev
+        uses: dariocurr/checkout-called@main

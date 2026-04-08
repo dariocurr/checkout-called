@@ -11,9 +11,5 @@ on:
 
 jobs:
   validate-ref:
-    uses: dariocurr/checkout-called/.github/workflows/validate.yml@dev
-    secrets: inherit
-
-  validate-sha:
-    uses: dariocurr/checkout-called/.github/workflows/validate.yml@cac8e9c46b340318d4295c1830de550a9f41b09e
+    uses: dariocurr/checkout-called/.github/workflows/validate.yml@main
     secrets: inherit
