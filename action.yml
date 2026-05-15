@@ -116,9 +116,23 @@ runs:
         # enable extended globbing for pattern matching
         shopt -s extglob
 
+        if [ -z "${ACTIONS_ID_TOKEN_REQUEST_TOKEN:-}" ] || [ -z "${ACTIONS_ID_TOKEN_REQUEST_URL:-}" ]; then
+          echo "::error::checkout-called requires an OIDC token (id-token: write permission)."
+          echo "::error::No OIDC token is available in this job."
+          echo "::error::This commonly happens when the workflow is triggered by 'pull_request' from a fork — GitHub does not issue OIDC tokens to those runs."
+          echo "::error::See the README 'Limitations' section for supported triggers and workarounds."
+          exit 1
+        fi
+
         JWT=$(curl -s -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "$ACTIONS_ID_TOKEN_REQUEST_URL")
         PAYLOAD=$(echo "$JWT" | cut -d '.' -f 2 | base64 -d 2>/dev/null || true)
-        WORKFLOW_REF_LINE==$(echo "$PAYLOAD" | grep -o '"job_workflow_ref":"[^"]*"')
+        WORKFLOW_REF_LINE=$(echo "$PAYLOAD" | grep -o '"job_workflow_ref":"[^"]*"' || true)
+
+        if [ -z "$WORKFLOW_REF_LINE" ]; then
+          echo "::error::Could not extract 'job_workflow_ref' from the OIDC token payload."
+          echo "::error::The OIDC endpoint returned an unexpected response. See the README 'Limitations' section."
+          exit 1
+        fi
 
         WORKFLOW_REPOSITORY=$(
           echo "$WORKFLOW_REF_LINE" \
