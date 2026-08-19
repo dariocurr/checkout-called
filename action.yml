@@ -116,6 +116,18 @@ runs:
         # enable extended globbing for pattern matching
         shopt -s extglob
 
+        # Prefer job workflow contexts when available (github.com).
+        # These contexts give called reusable workflow identity at runtime,
+        # so no OIDC token parsing needed.
+        CONTEXT_WORKFLOW_REPOSITORY="${{ job.workflow_repository }}"
+        CONTEXT_WORKFLOW_SHA="${{ job.workflow_sha }}"
+
+        if [ -n "${CONTEXT_WORKFLOW_REPOSITORY}" ] && [ -n "${CONTEXT_WORKFLOW_SHA}" ]; then
+          echo "repository=${CONTEXT_WORKFLOW_REPOSITORY}" >> $GITHUB_OUTPUT
+          echo "ref=${CONTEXT_WORKFLOW_SHA}" >> $GITHUB_OUTPUT
+          exit 0
+        fi
+
         if [ -z "${ACTIONS_ID_TOKEN_REQUEST_TOKEN:-}" ] || [ -z "${ACTIONS_ID_TOKEN_REQUEST_URL:-}" ]; then
           echo "::error::checkout-called requires an OIDC token (id-token: write permission)."
           echo "::error::No OIDC token is available in this job."

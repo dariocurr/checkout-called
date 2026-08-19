@@ -9,8 +9,9 @@ since evidently there is not enough [dogfeeding](https://en.wikipedia.org/wiki/E
 I created `checkout-called` to simplify checking out the called repository in your [reusable workflows](https://docs.github.com/en/actions/sharing-automations/reusing-workflows)
 
 ## Usage
+> On github.com, this action can use `job.workflow_*` contexts. OIDC may be skippable.
 
-> This action requires `id-token: write` permissions
+> This action may need `id-token: write` on GHES. No OIDC needed on github.com.
 
 To use this action in your called workflows and check out the repository automatically, add the following lines:
 
@@ -26,16 +27,17 @@ For example, if you call: `user/repository/.github/workflows/workflow.yml@branch
 > This repository is committed to maintaining compatibility and same version as [`actions/checkout`](https://github.com/actions/checkout)
 
 ## Limitations
+On github.com, action uses `job.workflow_repository` and `job.workflow_sha` contexts when available.
+On GHES, action falls back to OIDC `job_workflow_ref` claim parsing.
 
-This action relies on the OIDC token (`ACTIONS_ID_TOKEN_REQUEST_TOKEN`) to read
-the `job_workflow_ref` claim, which is the only reliable way to discover the
-repository and ref of the *called* reusable workflow at runtime.
+On GHES, these `job.workflow_*` contexts are not available.
+In that case, action uses OIDC token (`ACTIONS_ID_TOKEN_REQUEST_TOKEN`) to read
+the `job_workflow_ref` claim and derive called repository and ref.
 
 GitHub does **not** mint an OIDC token for workflows triggered by
 [`pull_request` from a forked repository](https://docs.github.com/en/actions/security-for-github-actions/security-hardening-your-deployments/about-security-hardening-with-openid-connect),
-for the same security reason that secrets are not exposed to those runs.
-As a result, this action cannot work in that scenario and will exit with a
-clear error.
+so this fallback cannot work there.
+As a result, on GHES this action exits with a clear error.
 
 Possible workarounds (need to be tested properly):
 
